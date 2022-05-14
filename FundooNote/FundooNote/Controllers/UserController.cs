@@ -1,33 +1,32 @@
-﻿
-
-using BusinessLayer.Interface;
+﻿using BusinessLayer.Interface;
 using DataBaseLayer.Users;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryLayer.DBContext;
 using System;
+using System.Linq;
 
 namespace FundooNote.Controllers
 {
 
-
     [ApiController]
     [Route("[controller]")]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
-        IUserBL userBL;
         FundooContext fundooContext;
-        public UserController(IUserBL userBL, FundooContext fundooDBContext)
+        IUserBL userBL;
+        
+        public UserController(FundooContext fundoo, IUserBL userBL)
         {
+            this.fundooContext = fundoo;
             this.userBL = userBL;
-            this.fundooContext = fundooDBContext;
         }
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public IActionResult AddUser(UserModel user)
         {
             try
             {
                 this.userBL.AddUser(user);
-                return this.Ok(new { success = true, message = $"Registration Successfull" });
+                return this.Ok(new { success = true, message = $"User Added Successfully" });
             }
             catch (Exception ex)
             {
@@ -35,7 +34,28 @@ namespace FundooNote.Controllers
                 throw ex;
             }
         }
+        [HttpPost("login/{email}/{password}")]
+        public IActionResult LoginUser(string email, string password)
+        {
+            try
+            {
+                var userdata = fundooContext.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+                if (userdata == null)
+                {
+                    return this.BadRequest(new { success = false, message = $"email and password is invalid" });
 
+                }
+
+                var result = this.userBL.LoginUser(email, password);
+                return this.Ok(new { success = true, message = $"login successfull {result}" });
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
 
     }
 }
