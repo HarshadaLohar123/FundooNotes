@@ -16,10 +16,12 @@ namespace RepositoryLayer.Services
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = true;
                 client.Credentials = new NetworkCredential("harshalohar12345@gmail.com", "Harsha123");
+                
                 MailMessage msgObj = new MailMessage();
                 msgObj.To.Add(email);
                 msgObj.From = new MailAddress("harshalohar12345@gmail.com");
                 msgObj.Subject = "Password Reset Link";
+                msgObj.Body= $"www.fundooNote.com/reset-password/{token}";
                 client.Send(msgObj);
             }
         }

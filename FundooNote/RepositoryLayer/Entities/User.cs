@@ -8,6 +8,8 @@ namespace RepositoryLayer.Entities
 {
     public class User
     {
+        internal object id;
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Userid { get; set; }
@@ -17,5 +19,6 @@ namespace RepositoryLayer.Entities
         public string Email { get; set; }
         public string Password { get; set; }
         public string Address { get; set; }
+       
     }
 }

@@ -14,7 +14,7 @@ namespace FundooNote.Controllers
     {
         FundooContext fundooContext;
         IUserBL userBL;
-        
+
         public UserController(FundooContext fundoo, IUserBL userBL)
         {
             this.fundooContext = fundoo;
@@ -57,5 +57,29 @@ namespace FundooNote.Controllers
             }
         }
 
+        [HttpPost("ForgotPassword/{email}")]
+        public ActionResult ForgotPassword(string email)
+        {
+            try
+            {
+                var Result = this.userBL.ForgotPassword(email);
+                if (Result != false)
+                {
+                    return this.Ok(new
+
+                    {
+                        success = true,
+                        message = $"mail sent sucessfully" + $"token: {Result}"
+                    });
+                }
+
+                return this.BadRequest(new { success = false, message = $"mail not sent" });
+            }
+            catch(Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }

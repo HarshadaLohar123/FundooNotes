@@ -1,4 +1,5 @@
 ﻿using DataBaseLayer.Users;
+using Experimental.System.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.DBContext;
@@ -17,7 +18,7 @@ namespace RepositoryLayer.Services
     public class UserRL : IUserRL
     {
         FundooContext fundoo;
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
         public UserRL(FundooContext fundoo, IConfiguration configuration)
         {
             this.fundoo = fundoo;
@@ -42,15 +43,13 @@ namespace RepositoryLayer.Services
             {
                 throw ex;
             }
-
-
         }
 
         public string LoginUser(string email, string password)
         {
             try
             {
-                var result = fundoo.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+                var result = fundoo.Users.Where(u => u.Email == email && u.Password == password).FirstOrDefault();
                 if (result == null)
                 {
                     return null;
@@ -62,10 +61,10 @@ namespace RepositoryLayer.Services
             {
                 throw ex;
             }
-            
+
         }
 
-        private string GetJWTToken(string email, object userid)
+        private static string GetJWTToken(string email, int userID)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN");
@@ -74,7 +73,7 @@ namespace RepositoryLayer.Services
                 Subject = new ClaimsIdentity(new Claim[]
               {
           new Claim("email", email),
-          new Claim("userid",userid.ToString())
+          new Claim("Userid",userID.ToString())
               }),
                 Expires = DateTime.UtcNow.AddHours(1),
 
@@ -87,5 +86,93 @@ namespace RepositoryLayer.Services
             return tokenHandler.WriteToken(token);
 
         }
+
+        public bool ForgotPassword(string email)
+        {
+            try
+            {
+                var userdata = fundoo.Users.FirstOrDefault(u => u.Email == email);
+                if (userdata == null)
+                {
+                    return false;
+                }
+
+                MessageQueue queue;
+                //Add message to queue
+                if (MessageQueue.Exists(@".\Private$\FundooQueue"))
+                {
+                    queue = new MessageQueue(@".\Private$\FundooQueue");
+                }
+
+                else
+                {
+                    queue = MessageQueue.Create(@".\Private$\FundooQueue");
+                }
+
+                Message message = new Message();
+                message.Formatter = new BinaryMessageFormatter();
+                message.Body = GetJWTToken(email, userdata.Userid);
+                message.Label = "Forgot password Email";
+                queue.Send(message);
+
+                Message msg = queue.Receive();
+                msg.Formatter = new BinaryMessageFormatter();
+                EmailServices.SendMail(email, message.Body.ToString());
+                queue.ReceiveCompleted += new ReceiveCompletedEventHandler(msmqQueue_ReceiveCompleted);
+
+                queue.BeginReceive();
+                queue.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private void msmqQueue_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
+        {
+            try
+            {
+                MessageQueue queue = (MessageQueue)sender;
+                Message msg = queue.EndReceive(e.AsyncResult);
+                EmailServices.SendMail(e.Message.ToString(), GenerateToken(e.Message.ToString()));
+                queue.BeginReceive();
+            }
+            catch (MessageQueueException ex)
+            {
+                if (ex.MessageQueueErrorCode == MessageQueueErrorCode.AccessDenied)
+                {
+                    Console.WriteLine("Access is denied. " +
+                      "Queue might be a system queue.");
+                }
+            }
+        }
+
+        public string GenerateToken(string email)
+        {
+            if (email == null)
+            {
+                return null;
+            }
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey = Encoding.ASCII.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+              {
+          new Claim("Email", email)
+              }),
+                Expires = DateTime.UtcNow.AddHours(1),
+
+                SigningCredentials =
+              new SigningCredentials(
+                new SymmetricSecurityKey(tokenKey),
+                SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+
     }
 }

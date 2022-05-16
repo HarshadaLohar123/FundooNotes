@@ -23,4 +23,6 @@ namespace FundooNote
                     webBuilder.UseStartup<Startup>();
                 });
     }
+
 }
+

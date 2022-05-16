@@ -56,11 +56,8 @@ namespace FundooNote
                     ValidateAudience = false
                 };
             });
-        
-
             services.AddSwaggerGen(setup =>
             {
-                //Include 'SecurityScheme' to use JWT Authentication
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = "bearer",
@@ -83,8 +80,8 @@ namespace FundooNote
                      { jwtSecurityScheme, Array.Empty<String>()}
                 });
             });
+         }
 
-        }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,22 +95,21 @@ namespace FundooNote
             app.UseRouting();
             app.UseSwagger();
 
-            // Swagger middleware to to handle requests and responses and serve swagger-ui (HTML, JS, CSS, etc.)
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
+            app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FundooNote");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FundooNotes");
             });
 
             app.UseAuthentication();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();   //enabling routing
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
 
             app.UseAuthorization();
 
