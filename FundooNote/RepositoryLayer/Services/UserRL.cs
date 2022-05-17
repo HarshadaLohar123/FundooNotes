@@ -44,13 +44,16 @@ namespace RepositoryLayer.Services
                 throw ex;
             }
         }
-
         public string LoginUser(string email, string password)
         {
+
             try
             {
-                var result = fundoo.Users.Where(u => u.Email == email && u.Password == password).FirstOrDefault();
-                if (result == null)
+
+                var result = fundoo.Users.Where(u => u.Email == email).FirstOrDefault();
+                string pass = StringCipher.DecodeFrom64(result.Password);
+
+                if (pass != password)
                 {
                     return null;
                 }
@@ -172,7 +175,52 @@ namespace RepositoryLayer.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        // Method to change password
+        public static string EncryptPassword(string password)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(password))
+                {
+                    return null;
 
+                }
+                else
+                {
+                    byte[] b = Encoding.ASCII.GetBytes(password);
+                    string encrypted = Convert.ToBase64String(b);
+                    return encrypted;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public bool ChangePassword(string Email, ChangePasswordModel changePassward)
+        {
+            try
+            {
+                if (changePassward.Password.Equals(changePassward.ConfirmPassword))
+                {
+                    var user = fundoo.Users.Where(x => x.Email == Email).FirstOrDefault();
+                    user.Password = StringCipher.EncodePasswordToBase64(changePassward.ConfirmPassword);
+                    fundoo.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
     }
 }

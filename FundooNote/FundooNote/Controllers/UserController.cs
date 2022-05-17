@@ -1,7 +1,9 @@
 ﻿using BusinessLayer.Interface;
 using DataBaseLayer.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryLayer.DBContext;
+using RepositoryLayer.Services;
 using System;
 using System.Linq;
 
@@ -14,6 +16,7 @@ namespace FundooNote.Controllers
     {
         FundooContext fundooContext;
         IUserBL userBL;
+        StringCipher stringCipher;
 
         public UserController(FundooContext fundoo, IUserBL userBL)
         {
@@ -39,15 +42,16 @@ namespace FundooNote.Controllers
         {
             try
             {
-                var userdata = fundooContext.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+                var userdata = fundooContext.Users.FirstOrDefault(u => u.Email == email);
+                string Password = StringCipher.DecodeFrom64(userdata.Password);
                 if (userdata == null)
                 {
                     return this.BadRequest(new { success = false, message = $"email and password is invalid" });
 
                 }
 
-                var result = this.userBL.LoginUser(email, password);
-                return this.Ok(new { success = true, message = $"login successfull {result}" });
+                string result = this.userBL.LoginUser(email, Password);
+                return this.Ok(new { success = true, message = $"login successfull {result}",Token=result });
 
             }
             catch (Exception ex)
@@ -81,5 +85,34 @@ namespace FundooNote.Controllers
                 throw ex;
             }
         }
+
+        [Authorize]
+        [HttpPut("ChangePassword")]
+
+        public ActionResult ChangePassword(ChangePasswordModel changePassward)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userid", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                var result = fundooContext.Users.Where(u => u.Userid == UserID).FirstOrDefault();
+                string Email = result.Email.ToString();
+
+                bool res = userBL.ChangePassword(Email, changePassward);//email.changepass
+                if (res == false)
+                {
+                    return this.BadRequest(new { success = false, message = "Enter Valid Password" });
+                }
+                return this.Ok(new { success = true, message = "Password changed Successfully" });
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+
     }
 }
