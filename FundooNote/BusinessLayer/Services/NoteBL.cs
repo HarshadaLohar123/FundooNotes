@@ -43,5 +43,18 @@ namespace BusinessLayer.Services
             }
 
         }
+        public Task DeleteNote(int userId, int noteId)
+        {
+
+            try
+            {
+                return this.noteRL.DeleteNote(userId, noteId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -36,7 +36,7 @@ namespace FundooNote.Controllers
                 int userId = Int32.Parse(userid.Value);
                 await this.noteBL.AddNote(notesPostModel, userId);
 
-                return this.Ok(new { success = true, message = $"User Added Successfully" });
+                return this.Ok(new { success = true, message = $"Notes Added Successfully" });
             }
             catch (Exception ex)
             {
@@ -65,6 +65,34 @@ namespace FundooNote.Controllers
                 }
                 await this.noteBL.UpdateNote(UserId, noteId, noteUpdateModel);
                 return this.Ok(new { success = true, message = "Note Updated successfully!!!" });
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// Delete the Notes
+        /// </summary>
+        /// <param name="noteId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpDelete("Delete/{noteId}")]
+        public async Task<ActionResult> DeleteNote(int noteId)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userID", StringComparison.InvariantCultureIgnoreCase));
+                int UserId = Int32.Parse(userid.Value);
+                var note = fundooContext.Notes.FirstOrDefault(u => u.Userid == UserId && u.NoteID == noteId);
+                if (note == null)
+                {
+                    return this.BadRequest(new { success = false, message = "Oops! This note is not available " });
+
+                }
+                await this.noteBL.DeleteNote(noteId, UserId);
+                return this.Ok(new { success = true, message = "Note Deleted Successfully" });
             }
             catch (Exception ex)
             {

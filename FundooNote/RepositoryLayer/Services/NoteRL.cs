@@ -71,7 +71,27 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
+        //deleting the notes
+        public async Task DeleteNote(int noteId, int userId)
+        {
 
- 
+            try
+            {
+                var note = fundoo.Notes.FirstOrDefault(u => u.NoteID == noteId && u.Userid == userId);
+                if (note != null)
+                {
+                    fundoo.Notes.Remove(note);
+                    await fundoo.SaveChangesAsync();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
     }
 }
