@@ -12,7 +12,16 @@ namespace RepositoryLayer.DBContext
         {
             
         }
+        public DbSet<Note> Notes { get; set; }
 
         public DbSet<User> Users { get; set; }
+
+        //method to use unique EmailID
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+        }
     }
 }

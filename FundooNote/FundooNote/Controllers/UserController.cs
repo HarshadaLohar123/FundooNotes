@@ -33,8 +33,7 @@ namespace FundooNote.Controllers
             }
             catch (Exception ex)
             {
-
-                throw ex;
+               throw ex;
             }
         }
         [HttpPost("login/{email}/{password}")]
@@ -112,7 +111,6 @@ namespace FundooNote.Controllers
             }
 
         }
-
 
     }
 }
