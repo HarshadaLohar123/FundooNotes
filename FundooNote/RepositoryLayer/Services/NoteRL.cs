@@ -92,6 +92,54 @@ namespace RepositoryLayer.Services
                 throw ex;
             }
         }
+        // change colour
+        public async Task ChangeColour(int userId, int noteId, string color)
+        {
+
+            try
+            {
+                var note = fundoo.Notes.FirstOrDefault(u => u.Userid == userId && u.NoteID == noteId);
+                if (note != null)
+                {
+                    note.Color = color;
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task ArchiveNote(int userId, int noteId)
+        {
+
+            try
+            {
+                var note = fundoo.Notes.FirstOrDefault(u => u.Userid == userId && u.NoteID == noteId);
+                if (note != null)
+                {
+                    if (note.IsArchive == true)
+                    {
+                        note.IsArchive = false;
+                    }
+
+                    if (note.IsArchive == false)
+                    {
+                        note.IsArchive = true;
+                    }
+                }
+
+                await fundoo.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
     }
 }

@@ -12,6 +12,9 @@ namespace RepositoryLayer.Interface
         Task AddNote(NotesPostModel notesPostModel, int UserID);
         Task<Note> UpdateNote(int userId, int noteId, NoteUpdateModel noteUpdateModel);
         Task DeleteNote(int noteId, int userId);
+        Task ChangeColour(int userId, int noteId, string colour);
+
+        Task ArchiveNote(int userId, int noteId);
 
     }
 }
