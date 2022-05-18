@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interface;
 using DataBaseLayer.Notes;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,19 @@ namespace BusinessLayer.Services
 
                 throw;
             }
+        }
+        public async Task<Note> UpdateNote(int userId, int noteId, NoteUpdateModel noteUpdateModel)
+        {
+            try
+            {
+                return await this.noteRL.UpdateNote(userId, noteId, noteUpdateModel);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
     }
 }

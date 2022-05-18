@@ -12,9 +12,8 @@ namespace RepositoryLayer.DBContext
         {
             
         }
-        public DbSet<Note> Notes { get; set; }
-
         public DbSet<User> Users { get; set; }
+        public DbSet<Note> Notes { get; set; }
 
         //method to use unique EmailID
         protected override void OnModelCreating(ModelBuilder modelBuilder)
