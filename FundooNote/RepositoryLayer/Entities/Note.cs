@@ -26,4 +26,5 @@ namespace RepositoryLayer.Entities
         public int Userid { get; set; }
         public virtual User user { get; set; }
     }
+
 }

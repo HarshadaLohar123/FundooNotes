@@ -18,5 +18,6 @@ namespace BusinessLayer.Interface
         Task Remainder(int userId, int noteId, DateTime remainder);
         Task Trash(int userId, int noteId);
         Task Pin(int userId, int noteId);
+        Task<List<Note>> GetAllNotes(int userId);
     }
 }

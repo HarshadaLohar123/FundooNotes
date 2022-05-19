@@ -109,6 +109,7 @@ namespace BusinessLayer.Services
             }
 
         }
+
         public async Task Trash(int userId, int noteId)
         {
             try
@@ -118,6 +119,18 @@ namespace BusinessLayer.Services
             catch (Exception ex)
             {
 
+                throw ex;
+            }
+
+        }
+        public Task<List<Note>> GetAllNotes(int userId)
+        {
+            try
+            {
+                return this.noteRL.GetAllNotes(userId);
+            }
+            catch (Exception ex)
+            {
                 throw ex;
             }
 

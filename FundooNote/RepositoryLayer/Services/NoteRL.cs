@@ -212,6 +212,18 @@ namespace RepositoryLayer.Services
             }
 
         }
+        public async Task<List<Note>> GetAllNotes(int userId)
+        {
+            try
+            {
+                return await fundoo.Notes.Where(u => u.Userid == userId).Include(u => u.user).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
 
     }
 }
