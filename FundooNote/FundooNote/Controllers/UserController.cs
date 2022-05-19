@@ -46,7 +46,6 @@ namespace FundooNote.Controllers
                 if (userdata == null)
                 {
                     return this.BadRequest(new { success = false, message = $"email and password is invalid" });
-
                 }
 
                 string result = this.userBL.LoginUser(email, Password);
@@ -55,7 +54,6 @@ namespace FundooNote.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -80,7 +78,6 @@ namespace FundooNote.Controllers
             }
             catch(Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -109,8 +106,6 @@ namespace FundooNote.Controllers
             {
                 throw ex;
             }
-
         }
-
     }
 }

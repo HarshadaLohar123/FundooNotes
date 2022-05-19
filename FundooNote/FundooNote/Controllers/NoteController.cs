@@ -70,7 +70,6 @@ namespace FundooNote.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -126,9 +125,8 @@ namespace FundooNote.Controllers
                 await this.noteBL.ChangeColour(UserId, noteId, colour);
                 return this.Ok(new { success = true, message = "Note Colour Changed Successfully " });
             }
-            catch (Exception ex)
-            {
-
+            catch(Exception ex)
+            { 
                 throw ex;
             }
         }
@@ -154,6 +152,28 @@ namespace FundooNote.Controllers
                 }
                 await this.noteBL.ArchiveNote(userId, noteId);
                 return this.Ok(new { success = true, message = "Note Archieved successfully" });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        [Authorize]
+        [HttpPut("remainderNote/{noteId}/{remainder}")]
+        public async Task<ActionResult> RemainderNote(int noteId, DateTime remainder)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userID", StringComparison.InvariantCultureIgnoreCase));
+                int userId = Int32.Parse(userid.Value);
+
+                var note = fundooContext.Notes.FirstOrDefault(u => u.Userid == userId && u.NoteID == noteId);
+                if (note == null)
+                {
+                    return this.BadRequest(new { success = false, message = "Sorry !! Note does't Exist" });
+                }
+                await this.noteBL.Remainder(userId, noteId, remainder);
+                return this.Ok(new { success = true, message = "Remainder Sets Successfully!!!" });
             }
             catch (Exception ex)
             {

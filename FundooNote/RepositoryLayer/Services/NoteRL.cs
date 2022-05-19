@@ -140,6 +140,25 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
+        public async Task Remainder(int userId, int noteId, DateTime remainder)
+        {
+
+            try
+            {
+                var note = fundoo.Notes.FirstOrDefault(u => u.Userid == userId && u.NoteID == noteId);
+                if (note != null)
+                {
+                    note.IsRemainder = true;
+                    note.Remainder = remainder;
+                }
+                await fundoo.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
     }
 }
