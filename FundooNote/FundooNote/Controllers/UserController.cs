@@ -36,6 +36,7 @@ namespace FundooNote.Controllers
                throw ex;
             }
         }
+        
         [HttpPost("login/{email}/{password}")]
         public IActionResult LoginUser(string email, string password)
         {

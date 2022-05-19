@@ -96,6 +96,32 @@ namespace BusinessLayer.Services
             }
 
         }
+        public async Task Pin(int userId, int noteId)
+        {
+            try
+            {
+                await this.noteRL.Pin(userId, noteId);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+        public async Task Trash(int userId, int noteId)
+        {
+            try
+            {
+                await this.noteRL.Trash(userId, noteId);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
 
     }
 }
