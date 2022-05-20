@@ -10,8 +10,8 @@ using RepositoryLayer.DBContext;
 namespace RepositoryLayer.Migrations
 {
     [DbContext(typeof(FundooContext))]
-    [Migration("20220517172359_Notes")]
-    partial class Notes
+    [Migration("20220520051230_LabelS")]
+    partial class LabelS
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,31 @@ namespace RepositoryLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("RepositoryLayer.Entities.Labels", b =>
+                {
+                    b.Property<int?>("LabelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("LabelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NoteID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Userid")
+                        .HasColumnType("int");
+
+                    b.HasKey("LabelId");
+
+                    b.HasIndex("NoteID");
+
+                    b.HasIndex("Userid");
+
+                    b.ToTable("Labels");
+                });
 
             modelBuilder.Entity("RepositoryLayer.Entities.Note", b =>
                 {
@@ -82,7 +107,7 @@ namespace RepositoryLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -95,7 +120,26 @@ namespace RepositoryLayer.Migrations
 
                     b.HasKey("Userid");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("RepositoryLayer.Entities.Labels", b =>
+                {
+                    b.HasOne("RepositoryLayer.Entities.Note", "note")
+                        .WithMany()
+                        .HasForeignKey("NoteID");
+
+                    b.HasOne("RepositoryLayer.Entities.User", "user")
+                        .WithMany()
+                        .HasForeignKey("Userid");
+
+                    b.Navigation("note");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("RepositoryLayer.Entities.Note", b =>
