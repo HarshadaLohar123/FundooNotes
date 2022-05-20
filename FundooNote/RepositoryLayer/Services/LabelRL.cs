@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using RepositoryLayer.DBContext;
 using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
@@ -39,6 +40,32 @@ namespace RepositoryLayer.Services
             catch (Exception ex)
             {
 
+                throw ex;
+            }
+        }
+        public async Task<List<Labels>> GetLabelByuserId(int userId)
+        {
+            try
+            {
+                List<Labels> reuslt = await fundoo.Labels.Where(u => u.Userid == userId).ToListAsync();
+                return reuslt;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public async Task<List<Labels>> GetlabelByNoteId(int userId, int NoteId)
+        {
+            try
+            {
+                List<Labels> reuslt = await fundoo.Labels.Where(u => u.NoteID == NoteId && u.Userid == userId).Include(u => u.user).Include(u => u.note).ToListAsync();
+                return reuslt;
+            }
+            catch (Exception ex)
+            {
                 throw ex;
             }
         }
