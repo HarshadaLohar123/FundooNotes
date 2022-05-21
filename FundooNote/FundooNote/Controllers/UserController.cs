@@ -23,6 +23,7 @@ namespace FundooNote.Controllers
             this.fundooContext = fundoo;
             this.userBL = userBL;
         }
+
         [HttpPost("Register")]
         public IActionResult AddUser(UserModel user)
         {

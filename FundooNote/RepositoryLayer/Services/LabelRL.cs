@@ -69,5 +69,42 @@ namespace RepositoryLayer.Services
                 throw ex;
             }
         }
+        public async Task<Labels> UpdateLabel(int userId, int labelId, string labelName)
+        {
+            try
+            {
+                var reuslt = fundoo.Labels.FirstOrDefault(u => u.LabelId== labelId && u.Userid == userId);
+
+                if (reuslt != null)
+                {
+                    reuslt.LabelName= labelName;
+                    await fundoo.SaveChangesAsync();
+                    var result = fundoo.Labels.Where(u => u.LabelId == labelId).FirstOrDefaultAsync();
+                    return reuslt;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task DeleteLabel(int labelId, int userId)
+        {
+            try
+            {
+                var result = fundoo.Labels.FirstOrDefault(u => u.LabelId == labelId && u.Userid == userId);
+                fundoo.Labels.Remove(result);
+                await fundoo.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

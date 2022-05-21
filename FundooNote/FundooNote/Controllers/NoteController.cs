@@ -19,10 +19,12 @@ namespace FundooNote.Controllers
     [Route("[controller]")]
     public class NoteController : ControllerBase
     {
+        //Fields
         FundooContext fundooContext;
         INoteBL noteBL;
         private readonly IDistributedCache distributedCache;
         private readonly IMemoryCache memoryCache;
+        
         // constructor
         public NoteController(FundooContext fundoo, INoteBL noteBL,IDistributedCache distributedCache,IMemoryCache memoryCache)
         {
