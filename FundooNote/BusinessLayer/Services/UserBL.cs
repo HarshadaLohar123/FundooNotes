@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interface;
 using DataBaseLayer.Users;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
@@ -65,5 +66,6 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
+       
     }
 }

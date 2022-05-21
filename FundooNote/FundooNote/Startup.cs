@@ -40,7 +40,7 @@ namespace FundooNote
             services.AddDistributedRedisCache(
                options =>
                {
-                   options.Configuration = "Localhost:6379";
+                   options.Configuration = "Localhost:6379" ;
                } );
             services.AddDbContext<FundooContext>(opts => opts.UseSqlServer(Configuration["ConnectionStrings:FundooNote"]));
             services.AddTransient<IUserBL, UserBL>();

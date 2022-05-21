@@ -8,7 +8,7 @@ namespace RepositoryLayer.Entities
 {
     public class User
     {
-        internal object id;
+        
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
