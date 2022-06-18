@@ -33,7 +33,7 @@ namespace RepositoryLayer.Services
                 userdata.Lastname = user.Lastname;
                 userdata.CreatedDate = DateTime.Now;
                 userdata.Email = user.Email;
-                userdata.Password = user.Password;
+                userdata.Password = StringCipher.EncodePasswordToBase64(user.Password);
                 userdata.Address = user.Address;
                 fundoo.Add(userdata);
                 fundoo.SaveChanges();

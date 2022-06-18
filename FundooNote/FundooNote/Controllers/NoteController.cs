@@ -107,10 +107,10 @@ namespace FundooNote.Controllers
                     return this.BadRequest(new { success = false, message = "Oops! This note is not available " });
 
                 }
-                if (note.IsTrash == true)
+               /* if (note.IsTrash == true)
                 {
                     return this.BadRequest(new { success = false, message = "sorry!! Note has been deleted, please create new note" });
-                }
+                }*/
                 await this.noteBL.DeleteNote(noteId, UserId);
                 return this.Ok(new { success = true, message = "Note Deleted Successfully" });
             }
@@ -140,10 +140,10 @@ namespace FundooNote.Controllers
                 {
                     return this.BadRequest(new { success = false, message = "Sorry! Note does not exist" });
                 }
-                if (note.IsTrash == true)
-                {
-                    return this.BadRequest(new { success = false, message = "sorry!! Note has been deleted, please create new note" });
-                }
+                //if (note.IsTrash == true)
+                //{
+                //    return this.BadRequest(new { success = false, message = "sorry!! Note has been deleted, please create new note" });
+                //}
 
                 await this.noteBL.ChangeColour(UserId, noteId, colour);
                 return this.Ok(new { success = true, message = "Note Colour Changed Successfully " });
@@ -165,20 +165,16 @@ namespace FundooNote.Controllers
         {
             try
             {
-                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userID", StringComparison.InvariantCultureIgnoreCase));
-                int userId = Int32.Parse(userid.Value);
-
-                var note = fundooContext.Notes.FirstOrDefault(u => u.Userid == userId && u.NoteID == noteId);
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserId = Int32.Parse(userid.Value);
+                var note = fundooContext.Notes.FirstOrDefault(x => x.Userid == UserId && x.NoteID == noteId);
                 if (note == null)
                 {
-                    return this.BadRequest(new { success = false, message = "Failed to archieve notes or Id does not exists" });
+                    return this.BadRequest(new { success = false, message = "Sorry! This noteID is doesn't exist" });
                 }
-                if (note.IsTrash == true)
-                {
-                    return this.BadRequest(new { success = false, message = "sorry!! Note has been deleted, please create new note" });
-                }
-                await this.noteBL.ArchiveNote(userId, noteId);
-                return this.Ok(new { success = true, message = "Note Archieved successfully" });
+                await this.noteBL.ArchiveNote(UserId, noteId);
+                return this.Ok(new { success = true, message = "Archieve Note Success" });
+
             }
             catch (Exception ex)
             {
@@ -230,10 +226,10 @@ namespace FundooNote.Controllers
                 {
                     return this.BadRequest(new { success = false, message = " Sorry!!! Failed to Trash Note" });
                 }
-                if (note.IsTrash == true)
+              /*   if (note.IsTrash == true)
                 {
                     return this.BadRequest(new { success = false, message = "sorry!! Note has been deleted, please create new note" });
-                }
+                }*/
                 await this.noteBL.Trash(userId, noteId);
                 return this.Ok(new { success = true, message = "Trashed successfully!!!" });
             }

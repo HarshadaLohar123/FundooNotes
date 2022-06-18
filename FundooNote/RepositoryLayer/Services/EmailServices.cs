@@ -21,7 +21,10 @@ namespace RepositoryLayer.Services
                 msgObj.To.Add(email);
                 msgObj.From = new MailAddress("harshalohar12345@gmail.com");
                 msgObj.Subject = "Password Reset Link";
-                msgObj.Body= $"www.fundooNote.com/reset-password/{token}";
+                // msgObj.Body= $"www.fundooNote.com/reset-password/{token}";
+                msgObj.Body = "<html><body><p><b>Hello </b>,<br/>click the below link for reset password.<br/>" +
+                    $"http://localhost:4200/reset-password/{token}" +
+                    "</p></body></html>";
                 client.Send(msgObj);
             }
         }
